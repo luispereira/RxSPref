@@ -5,14 +5,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.lib.rxspreflib.RxSPref;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,43 +28,34 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                RxSPref.init(getApplicationContext()).write("value", "dammm").observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<Boolean>() {
-                    @Override
-                    public void onCompleted() {
+                RxSPref.init(getApplicationContext()).write("value", "dammm")
+                        .doOnNext(new Action1<Boolean>() {
+                            @Override
+                            public void call(Boolean aBoolean) {
+                                if (aBoolean) {
+                                    RxSPref.init(getApplicationContext()).retrieve("value")
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Subscriber<String>() {
+                                                @Override
+                                                public void onCompleted() {
 
-                    }
+                                                }
 
-                    @Override
-                    public void onError(Throwable e) {
+                                                @Override
+                                                public void onError(Throwable e) {
 
-                    }
+                                                }
 
-                    @Override
-                    public void onNext(Boolean isSuccessfull) {
-                        if (isSuccessfull) {
-                            Snackbar.make(view, "Successfull saved", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }
-                    }
-                });
-
-                RxSPref.init(getApplicationContext()).retrieve("value").observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<String>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(String value) {
-                            Snackbar.make(view, "The saved value is " + value, Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                    }
-                });
+                                                @Override
+                                                public void onNext(String value) {
+                                                    Snackbar.make(view, "The saved value is " + value, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                                                }
+                                            });
+                                }
+                            }
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe();
             }
         });
     }
