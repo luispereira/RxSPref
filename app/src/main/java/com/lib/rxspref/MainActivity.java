@@ -28,12 +28,12 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                RxSPref.init(getApplicationContext()).write("value", "dammm")
+                RxSPref.buildSettings(getApplicationContext()).write("value", "dammm")
                         .doOnNext(new Action1<Boolean>() {
                             @Override
                             public void call(Boolean aBoolean) {
                                 if (aBoolean) {
-                                    RxSPref.init(getApplicationContext()).retrieve("value")
+                                    RxSPref.buildSettings(getApplicationContext()).retrieve("value")
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .subscribe(new Subscriber<String>() {
                                                 @Override

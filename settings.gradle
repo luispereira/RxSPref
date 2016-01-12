@@ -1,1 +1,1 @@
-include ':app', ':rxspreflib', ':spref'
+include ':app', ':rxspreflib', ':spreflib'

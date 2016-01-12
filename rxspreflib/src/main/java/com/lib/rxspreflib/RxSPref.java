@@ -13,23 +13,62 @@ import rx.Subscriber;
  * @author lpereira on 11/01/2016.
  */
 public class RxSPref {
+    private static SPref sInstance;
 
     /**
      * Empty Constructor
      * @param context the context
      */
     private RxSPref(Context context) {
-        SPref.init(context);
+        SPref.buildSettings(context);
+    }
+
+    private RxSPref() {
+        SPref.buildSettings();
+    }
+
+    private RxSPref(Context context, int resource) {
+        SPref.init(context).provideDefaultResourceFile(resource);
     }
 
     /**
-     * Initializes the RxSPref lib
+     * Instance of the Spref lib
+     * @return the instance of Spref lib
+     */
+    public static synchronized SPref getInstance()  {
+        if (sInstance == null) {
+            throw new SDKNotInitializedException();
+        }
+        return sInstance;
+    }
+
+
+    /**
+     * Opens the shared preferences
      * @param context the application context
      * @return the instance of the RxSPref
      */
-    public static RxSPref init(Context context){
+    public static RxSPref buildSettings(Context context){
         return new RxSPref(context);
     }
+
+    /**
+     * Opens the shared preferences, before calling this you must cal {@link #init(Context, int)}
+     * @return the preferences
+     */
+    public static RxSPref buildSettings(){
+        return new RxSPref();
+    }
+
+    /**
+     * After calling this the developer should call {@link #buildSettings()} instead
+     * @param context the application context
+     * @param resource the resource xml file
+     */
+    public static RxSPref init(Context context, int resource){
+        return new RxSPref(context, resource);
+    }
+
 
     /**
      * Retrieve a value from shared preferences
