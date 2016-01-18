@@ -7,6 +7,8 @@ import com.lib.spref.exceptions.SDKNotInitializedException;
 
 import java.util.Set;
 
+import rx.Observable;
+
 /**
  * @author lpereira on 11/01/2016.
  */
@@ -64,8 +66,8 @@ public class RxSPref {
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static rx.Observable<String> retrieve(final String key){
-        return rx.Observable.create( subscriber -> {
+    public static Observable<String> retrieve(final String key){
+        return Observable.create( subscriber -> {
             if(!subscriber.isUnsubscribed()) {
                 if(getInstance() != null) {
                     subscriber.onNext(SPref.buildSettings().getSetting(key));
@@ -83,8 +85,8 @@ public class RxSPref {
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static rx.Observable<Integer> retrieveAsInt(final String key){
-        return rx.Observable.create( subscriber -> {
+    public static Observable<Integer> retrieveAsInt(final String key){
+        return Observable.create( subscriber -> {
             if(!subscriber.isUnsubscribed()) {
                 if(getInstance() != null) {
                     subscriber.onNext(SPref.buildSettings().getIntSetting(key));
@@ -103,8 +105,8 @@ public class RxSPref {
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static rx.Observable<Boolean> write(final String key, final String value){
-        return rx.Observable.create(subscriber -> {
+    public static Observable<Boolean> write(final String key, final String value){
+        return Observable.create(subscriber -> {
             if(!subscriber.isUnsubscribed()) {
                 if(getInstance() != null) {
                     SPref.buildSettings().saveSetting(key, value);
@@ -124,8 +126,8 @@ public class RxSPref {
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static rx.Observable<Boolean> write(final String key, final int value){
-        return rx.Observable.create(subscriber -> {
+    public static Observable<Boolean> write(final String key, final int value){
+        return Observable.create(subscriber -> {
             if(!subscriber.isUnsubscribed()) {
                 if(getInstance() != null) {
                     SPref.buildSettings().saveSetting(key, value);
@@ -145,8 +147,8 @@ public class RxSPref {
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static rx.Observable<Boolean> write(final String key, final boolean value){
-        return rx.Observable.create(subscriber -> {
+    public static Observable<Boolean> write(final String key, final boolean value){
+        return Observable.create(subscriber -> {
             if(!subscriber.isUnsubscribed()) {
                 if(getInstance() != null) {
                     SPref.buildSettings().saveSetting(key, value);
@@ -166,8 +168,8 @@ public class RxSPref {
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static rx.Observable<Boolean> write(final String key, final long value){
-        return rx.Observable.create(subscriber -> {
+    public static Observable<Boolean> write(final String key, final long value){
+        return Observable.create(subscriber -> {
             if(!subscriber.isUnsubscribed()) {
                 if(getInstance() != null) {
                     SPref.buildSettings().saveSetting(key, value);
@@ -187,8 +189,8 @@ public class RxSPref {
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static rx.Observable<Boolean> write(final String key, final Set<String> value){
-        return rx.Observable.create(subscriber -> {
+    public static Observable<Boolean> write(final String key, final Set<String> value){
+        return Observable.create(subscriber -> {
             if(!subscriber.isUnsubscribed()) {
                 if(getInstance() != null) {
                     SPref.buildSettings().saveSetting(key, value);
@@ -207,8 +209,8 @@ public class RxSPref {
      * @return the observable
      */
     @SuppressWarnings("unused")
-    public static rx.Observable<Boolean> remove(final String key){
-        return rx.Observable.create(subscriber -> {
+    public static Observable<Boolean> remove(final String key){
+        return Observable.create(subscriber -> {
             if(!subscriber.isUnsubscribed()) {
                 if(getInstance() != null) {
                     SPref.buildSettings().removeSetting(key);
