@@ -7,13 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.lib.rxspreflib.RxSPref;
 
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,39 +23,18 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                RxSPref.buildSettings(getApplicationContext()).write("value", "dammm")
-                        .doOnNext(new Action1<Boolean>() {
-                            @Override
-                            public void call(Boolean aBoolean) {
-                                if (aBoolean) {
-                                    RxSPref.buildSettings(getApplicationContext()).retrieve("value")
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new Subscriber<String>() {
-                                                @Override
-                                                public void onCompleted() {
-
-                                                }
-
-                                                @Override
-                                                public void onError(Throwable e) {
-
-                                                }
-
-                                                @Override
-                                                public void onNext(String value) {
-                                                    Snackbar.make(view, "The saved value is " + value, Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                                                }
-                                            });
-                                }
-                            }
-                        })
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe();
-            }
-        });
+        fab.setOnClickListener(view ->
+                RxSPref.write("value", "This is a value")
+                .doOnNext(aBoolean -> {
+                    if (aBoolean) {
+                        RxSPref.retrieve("value")
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(value -> Snackbar.make(view, "The saved value is [" + value + "]", Snackbar.LENGTH_LONG).setAction("Action", null).show());
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe());
     }
 
     @Override

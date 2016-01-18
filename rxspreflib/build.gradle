@@ -19,15 +19,16 @@ android {
     }
 
     compileOptions {
-        targetCompatibility 1.7
-        sourceCompatibility 1.7
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
     }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'io.reactivex:rxjava:1.1.0'
-    compile 'io.reactivex:rxandroid:1.1.0'
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:+'
-    compile project(':spreflib')
+    rootProject.ext.libDependencies.each { def compilationType ->
+        compilationType.value.each { def libUrl ->
+            invokeMethod(compilationType.key, libUrl)
+            println compilationType.key + " '" + libUrl + "'"
+        }
+    }
 }

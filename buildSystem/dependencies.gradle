@@ -1,0 +1,55 @@
+ext {
+    //Android
+    applicationPackage = "com.lib.spreferences"
+    androidBuildToolsVersion = "23.0.2"
+    androidMinSdkVersion = 14
+    androidMinTestSdkVersion = 21
+    androidTargetSdkVersion = 23
+    androidCompileSdkVersion = 23
+
+    androidAppCompatV7Version = '23.1.1'
+    supportDesignVersion = '23.1.1'
+    rxJavaVersion = '1.1.0'
+    sprefVersion = "0.1.+"
+
+    gradleVersion = "1.5.0"
+
+    dependencies = [
+            appCompat         : "com.android.support:appcompat-v7:${androidAppCompatV7Version}",
+            supportDesign     : "com.android.support:design:${supportDesignVersion}",
+            rxJava            : "io.reactivex:rxjava:${rxJavaVersion}",
+            rxAndroid            : "io.reactivex:rxandroid:${rxJavaVersion}",
+            spref             : "com.github.luispereira:spref:${sprefVersion}",
+            retrolambda       : "net.orfjackal.retrolambda:retrolambda:+"
+
+    ]
+
+    classPathDependencies = [
+            gradle :  "com.android.tools.build:gradle:${gradleVersion}"
+    ]
+
+    libDependencies = [
+            compile           : [
+                    dependencies.rxJava,
+                    dependencies.rxAndroid,
+                    dependencies.spref
+            ],
+            retrolambdaConfig : [
+                    dependencies.retrolambda
+            ]
+    ]
+
+    appDependencies = [
+        compile           : [
+                dependencies.rxJava,
+                dependencies.rxAndroid,
+                dependencies.appCompat,
+                dependencies.supportDesign
+        ],
+        retrolambdaConfig : [
+                dependencies.retrolambda
+        ]
+    ]
+}
+
+
