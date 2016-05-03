@@ -179,28 +179,28 @@ public class RxSPref {
             }
         });
     }
-
-    /**
-     * Writes a value to the shared preferences
-     *
-     * @param key   the key
-     * @param value the value
-     * @return the Observable
-     */
-    @SuppressWarnings("unused")
-    public Observable<Boolean> write(final String key, final long value) {
-        return Observable.create(subscriber -> {
-            if (!subscriber.isUnsubscribed()) {
-                if (getPref() != null) {
-                    getSettingsConnector().saveSetting(key, value);
-                    subscriber.onNext(true);
-                } else {
-                    subscriber.onError(new SDKNotInitialized());
-                }
-                subscriber.onCompleted();
-            }
-        });
-    }
+//
+//    /**
+//     * Writes a value to the shared preferences
+//     *
+//     * @param key   the key
+//     * @param value the value
+//     * @return the Observable
+//     */
+//    @SuppressWarnings("unused")
+//    public Observable<Boolean> write(final String key, final float value) {
+//        return Observable.create(subscriber -> {
+//            if (!subscriber.isUnsubscribed()) {
+//                if (getPref() != null) {
+//                    getSettingsConnector().saveSetting(key, value);
+//                    subscriber.onNext(true);
+//                } else {
+//                    subscriber.onError(new SDKNotInitialized());
+//                }
+//                subscriber.onCompleted();
+//            }
+//        });
+//    }
 
     /**
      * Writes a value to the shared preferences

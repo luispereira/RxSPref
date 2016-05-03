@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -20,19 +21,28 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        SampleApplication.getInstance().getPref().write("valueFloat", 2).subscribe();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(view ->
                 SampleApplication.getInstance().getPref().write("value", "This is a value")
-                .doOnNext(aBoolean -> {
-                    if (aBoolean) {
-                        SampleApplication.getInstance().getPref().retrieve("value")
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(value -> Snackbar.make(view, "The saved value is [" + value + "]", Snackbar.LENGTH_LONG).setAction("Action", null).show());
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe());
+                        .doOnNext(aBoolean -> {
+                            if (aBoolean) {
+                                SampleApplication.getInstance().getPref().retrieve("value")
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(value -> Snackbar.make(view, "The saved value is [" + value + "]", Snackbar.LENGTH_LONG).setAction("Action", null).show());
+                            }
+                        })
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .observeOn(Schedulers.io())
+                        .subscribe());
+
+        findViewById(R.id.buttonFloat).setOnClickListener(v -> {
+            SampleApplication.getInstance().getPref().retrieveAsInt("valueFloat").doOnNext(fValue -> Toast.makeText(this, "Value is [" + fValue  + "]", Toast.LENGTH_SHORT).show())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .observeOn(Schedulers.io())
+                    .subscribe();
+        });
     }
 
     @Override
