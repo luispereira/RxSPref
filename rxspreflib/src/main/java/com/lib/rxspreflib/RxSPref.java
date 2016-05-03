@@ -2,9 +2,11 @@ package com.lib.rxspreflib;
 
 import android.content.Context;
 
+import com.lib.rxspreflib.eceptions.SDKNotInitialized;
 import com.lib.spref.SPref;
-import com.lib.spref.exceptions.SDKNotInitializedException;
+import com.lib.spref.SettingsConnector;
 
+import java.util.List;
 import java.util.Set;
 
 import rx.Observable;
@@ -13,85 +15,121 @@ import rx.Observable;
  * @author lpereira on 11/01/2016.
  */
 public class RxSPref {
-    private static RxSPref sInstance;
-    private int mResource = -1;
+    private SPref sPref;
+    private SettingsConnector mSettingsConnector;
 
-
-    private RxSPref() {
+    private RxSPref(Context context) {
+        sPref = SPref.init(context);
     }
 
-    private RxSPref(int resource) {
-        mResource = resource;
-    }
-
-    /**
-     * Instance of the Spref lib
-     * @return the instance of Spref lib
-     */
-    private static synchronized RxSPref getInstance()  {
-        if (sInstance == null) {
-            throw new SDKNotInitializedException();
-        }
-        return sInstance;
+    protected SPref getPref() {
+        return sPref;
     }
 
     /**
      * This should be called in application onCreate
+     *
      * @param context the application context
      */
-    public static void init(Context context){
-        if(sInstance != null && sInstance.getResource() != -1) {
-            SPref.init(context).provideDefaultResourceFile(sInstance.getResource());
-        }else{
-            SPref.init(context);
-            sInstance = new RxSPref();
-        }
+    public static RxSPref init(Context context) {
+        return new RxSPref(context);
     }
 
     /**
      * Receives an xml file to be merged upon initialization
+     *
      * @param resource the resource xml file
      * @return instance to be initialized
      */
     @SuppressWarnings("unused")
-    public static RxSPref provideDefaulFile(int resource){
-        sInstance =  new RxSPref(resource);
-        return sInstance;
+    public RxSPref provideDefaultFile(int resource) {
+        sPref = sPref.provideDefaultResourceFile(resource);
+        return this;
     }
 
+    /**
+     * The initializer method of the RxSPref lib
+     *
+     * @param preferencesName application context
+     * @return the instance of SPref
+     */
+    public RxSPref name(String preferencesName) {
+        sPref = sPref.name(preferencesName);
+        return this;
+    }
+
+    /**
+     * Builds shared preference in order to access, save and remove  them
+     */
+    public RxSPref buildSettings() {
+        mSettingsConnector = sPref.buildSettings();
+        return this;
+    }
+
+    private SettingsConnector getSettingsConnector() {
+        if (sPref == null) {
+            throw new SDKNotInitialized();
+        }
+
+        if (mSettingsConnector == null) {
+            mSettingsConnector = sPref.buildSettings();
+        }
+        return mSettingsConnector;
+    }
 
     /**
      * Retrieve a value from shared preferences
+     *
      * @param key the key
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static Observable<String> retrieve(final String key){
-        return Observable.create( subscriber -> {
-            if(!subscriber.isUnsubscribed()) {
-                if(getInstance() != null) {
-                    subscriber.onNext(SPref.buildSettings().getSetting(key));
-                }else{
-                    subscriber.onError(new SDKNotInitializedException());
-                }
-                subscriber.onCompleted();
-            }
-        });
+    public Observable<String> retrieve(final String key) {
+        return Observable.defer(() -> Observable.just(getSettingsConnector().getSetting(key)));
     }
 
     /**
      * Retrieve a value from shared preferences
+     *
      * @param key the key
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static Observable<Integer> retrieveAsInt(final String key){
-        return Observable.create( subscriber -> {
-            if(!subscriber.isUnsubscribed()) {
-                if(getInstance() != null) {
-                    subscriber.onNext(SPref.buildSettings().getIntSetting(key));
-                }else{
-                    subscriber.onError(new SDKNotInitializedException());
+    public Observable<Integer> retrieveAsInt(final String key) {
+        return Observable.defer(() -> Observable.just(getSettingsConnector().getIntSetting(key)));
+    }
+
+    @SuppressWarnings("unused")
+    public Observable<Boolean> retrieveAsBoolean(final String key, boolean defaultValue) {
+        return Observable.defer(() -> Observable.just(getSettingsConnector().getBooleanSetting(key, defaultValue)));
+    }
+
+    @SuppressWarnings("unused")
+    public <T> Observable<List<T>> retrieveAsList(final String key) {
+        return Observable.defer(() -> Observable.from(getSettingsConnector().getListSetting(key)));
+    }
+
+    @SuppressWarnings("unused")
+    public Observable<Float> retrieveAsFloat(final String key) {
+        return Observable.defer(() -> Observable.just(getSettingsConnector().getFloatSetting(key)));
+    }
+
+    /**
+     * Writes a value to the shared preferences
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the Observable
+     */
+    @SuppressWarnings("unused")
+    public Observable<Boolean> write(final String key, final String value) {
+        return Observable.create(subscriber -> {
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().saveSetting(key, value);
+                    subscriber.onNext(true);
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
                 }
                 subscriber.onCompleted();
             }
@@ -100,19 +138,20 @@ public class RxSPref {
 
     /**
      * Writes a value to the shared preferences
-     * @param key the key
+     *
+     * @param key   the key
      * @param value the value
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static Observable<Boolean> write(final String key, final String value){
+    public Observable<Boolean> write(final String key, final int value) {
         return Observable.create(subscriber -> {
-            if(!subscriber.isUnsubscribed()) {
-                if(getInstance() != null) {
-                    SPref.buildSettings().saveSetting(key, value);
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().saveSetting(key, value);
                     subscriber.onNext(true);
-                }else{
-                    subscriber.onError(new SDKNotInitializedException());
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
                 }
                 subscriber.onCompleted();
             }
@@ -121,19 +160,20 @@ public class RxSPref {
 
     /**
      * Writes a value to the shared preferences
-     * @param key the key
+     *
+     * @param key   the key
      * @param value the value
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static Observable<Boolean> write(final String key, final int value){
+    public Observable<Boolean> write(final String key, final boolean value) {
         return Observable.create(subscriber -> {
-            if(!subscriber.isUnsubscribed()) {
-                if(getInstance() != null) {
-                    SPref.buildSettings().saveSetting(key, value);
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().saveSetting(key, value);
                     subscriber.onNext(true);
-                }else{
-                    subscriber.onError(new SDKNotInitializedException());
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
                 }
                 subscriber.onCompleted();
             }
@@ -142,19 +182,20 @@ public class RxSPref {
 
     /**
      * Writes a value to the shared preferences
-     * @param key the key
+     *
+     * @param key   the key
      * @param value the value
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static Observable<Boolean> write(final String key, final boolean value){
+    public Observable<Boolean> write(final String key, final long value) {
         return Observable.create(subscriber -> {
-            if(!subscriber.isUnsubscribed()) {
-                if(getInstance() != null) {
-                    SPref.buildSettings().saveSetting(key, value);
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().saveSetting(key, value);
                     subscriber.onNext(true);
-                }else{
-                    subscriber.onError(new SDKNotInitializedException());
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
                 }
                 subscriber.onCompleted();
             }
@@ -163,19 +204,20 @@ public class RxSPref {
 
     /**
      * Writes a value to the shared preferences
-     * @param key the key
+     *
+     * @param key   the key
      * @param value the value
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static Observable<Boolean> write(final String key, final long value){
+    public <T> Observable<Boolean> write(final String key, final List<T> value) {
         return Observable.create(subscriber -> {
-            if(!subscriber.isUnsubscribed()) {
-                if(getInstance() != null) {
-                    SPref.buildSettings().saveSetting(key, value);
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().saveSetting(key, value);
                     subscriber.onNext(true);
-                }else{
-                    subscriber.onError(new SDKNotInitializedException());
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
                 }
                 subscriber.onCompleted();
             }
@@ -184,19 +226,20 @@ public class RxSPref {
 
     /**
      * Writes a value to the shared preferences
-     * @param key the key
+     *
+     * @param key   the key
      * @param value the value
      * @return the Observable
      */
     @SuppressWarnings("unused")
-    public static Observable<Boolean> write(final String key, final Set<String> value){
+    public Observable<Boolean> write(final String key, final Set<String> value) {
         return Observable.create(subscriber -> {
-            if(!subscriber.isUnsubscribed()) {
-                if(getInstance() != null) {
-                    SPref.buildSettings().saveSetting(key, value);
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().saveSetting(key, value);
                     subscriber.onNext(true);
-                }else{
-                    subscriber.onError(new SDKNotInitializedException());
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
                 }
                 subscriber.onCompleted();
             }
@@ -205,25 +248,22 @@ public class RxSPref {
 
     /**
      * Remove a setting
+     *
      * @param key the setting key
      * @return the observable
      */
     @SuppressWarnings("unused")
-    public static Observable<Boolean> remove(final String key){
+    public Observable<Boolean> remove(final String key) {
         return Observable.create(subscriber -> {
-            if(!subscriber.isUnsubscribed()) {
-                if(getInstance() != null) {
-                    SPref.buildSettings().removeSetting(key);
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().removeSetting(key);
                     subscriber.onNext(true);
-                }else{
-                    subscriber.onError(new SDKNotInitializedException());
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
                 }
                 subscriber.onCompleted();
             }
         });
-    }
-
-    private int getResource() {
-        return mResource;
     }
 }

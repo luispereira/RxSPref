@@ -8,8 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.lib.rxspreflib.RxSPref;
-
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -24,10 +22,10 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(view ->
-                RxSPref.write("value", "This is a value")
+                SampleApplication.getInstance().getPref().write("value", "This is a value")
                 .doOnNext(aBoolean -> {
                     if (aBoolean) {
-                        RxSPref.retrieve("value")
+                        SampleApplication.getInstance().getPref().retrieve("value")
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(value -> Snackbar.make(view, "The saved value is [" + value + "]", Snackbar.LENGTH_LONG).setAction("Action", null).show());
                     }

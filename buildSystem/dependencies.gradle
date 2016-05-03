@@ -10,15 +10,15 @@ ext {
     androidAppCompatV7Version = '23.1.1'
     supportDesignVersion = '23.1.1'
     rxJavaVersion = '1.1.0'
-    sprefVersion = "0.1.+"
+    sprefVersion = "0.4.0"
 
-    gradleVersion = "1.5.0"
+    gradleVersion = "2.1.0"
 
     dependencies = [
             appCompat         : "com.android.support:appcompat-v7:${androidAppCompatV7Version}",
             supportDesign     : "com.android.support:design:${supportDesignVersion}",
             rxJava            : "io.reactivex:rxjava:${rxJavaVersion}",
-            rxAndroid            : "io.reactivex:rxandroid:${rxJavaVersion}",
+            rxAndroid         : "io.reactivex:rxandroid:${rxJavaVersion}",
             spref             : "com.github.luispereira:spref:${sprefVersion}",
             retrolambda       : "net.orfjackal.retrolambda:retrolambda:+"
 

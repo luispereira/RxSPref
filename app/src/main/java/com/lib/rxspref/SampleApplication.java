@@ -9,9 +9,21 @@ import com.lib.rxspreflib.RxSPref;
  */
 public class SampleApplication extends Application {
 
+    private RxSPref sPref;
+    private static SampleApplication sInstance;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        RxSPref.init(this);
+        sPref = RxSPref.init(this).buildSettings();
+        sInstance = this;
+    }
+
+    public static SampleApplication getInstance() {
+        return sInstance;
+    }
+
+    public RxSPref getPref() {
+        return sPref;
     }
 }
