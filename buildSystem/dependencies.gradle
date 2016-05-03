@@ -12,6 +12,8 @@ ext {
     rxJavaVersion = '1.1.0'
     sprefVersion = "0.4.0"
 
+    leakCannary = '1.4-beta2'
+
     gradleVersion = "2.1.0"
 
     dependencies = [
@@ -20,7 +22,11 @@ ext {
             rxJava            : "io.reactivex:rxjava:${rxJavaVersion}",
             rxAndroid         : "io.reactivex:rxandroid:${rxJavaVersion}",
             spref             : "com.github.luispereira:spref:${sprefVersion}",
-            retrolambda       : "net.orfjackal.retrolambda:retrolambda:+"
+            retrolambda       : "net.orfjackal.retrolambda:retrolambda:+",
+
+            //Dev help leaks
+            leakCanary        : "com.squareup.leakcanary:leakcanary-android:${leakCannary}",
+            leakCanaryRelease : "com.squareup.leakcanary:leakcanary-android-no-op:${leakCannary}"
 
     ]
 
@@ -48,6 +54,12 @@ ext {
         ],
         retrolambdaConfig : [
                 dependencies.retrolambda
+        ],
+        debugCompile  : [
+                dependencies.leakCanary
+        ],
+        releaseCompile: [
+                dependencies.leakCanaryRelease
         ]
     ]
 }
