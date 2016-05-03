@@ -1,8 +1,8 @@
-# RxSPref
+# RxSPref #
 
 Allows to retrieve and saven Shared Preferences (using SPref lib) with RxJava / RxAndroid goodies
 
-## How To Setup ##
+### How To Setup 
 
 Dependency:
 
@@ -11,12 +11,13 @@ Dependency:
 ```
 
 Repository:
-
+```groovy 
     repositories {
         jcenter()   //or  mavenCentral()
     }
-    
- ## How To Use ##
+```  
+
+### How To Use 
  
  In order to initialize the library, the following must be applied
  
