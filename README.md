@@ -1,6 +1,6 @@
 # RxSPref #
 
-Allows to retrieve and saven Shared Preferences (using SPref lib) with RxJava / RxAndroid goodies
+Allows to retrieve and save Shared Preferences in a simpler way (using SPref lib) with RxJava / RxAndroid goodies
 
 ### How To Setup 
 
