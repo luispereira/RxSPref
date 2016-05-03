@@ -22,13 +22,12 @@ public class RxSPref {
         sPref = SPref.init(context);
     }
 
-    protected SPref getPref() {
+    private SPref getPref() {
         return sPref;
     }
 
     /**
      * This should be called in application onCreate
-     *
      * @param context the application context
      */
     public static RxSPref init(Context context) {
@@ -37,7 +36,6 @@ public class RxSPref {
 
     /**
      * Receives an xml file to be merged upon initialization
-     *
      * @param resource the resource xml file
      * @return instance to be initialized
      */
@@ -49,8 +47,7 @@ public class RxSPref {
 
     /**
      * The initializer method of the RxSPref lib
-     *
-     * @param preferencesName application context
+     * @param preferencesName shared preference name
      * @return the instance of SPref
      */
     public RxSPref name(String preferencesName) {
@@ -66,6 +63,10 @@ public class RxSPref {
         return this;
     }
 
+    /**
+     * Checks for a correct initialization of the SDK and retrieves the shared preferences instance
+     * @return shared preferences instance
+     */
     private SettingsConnector getSettingsConnector() {
         if (sPref == null) {
             throw new SDKNotInitialized();
@@ -90,7 +91,6 @@ public class RxSPref {
 
     /**
      * Retrieve a value from shared preferences
-     *
      * @param key the key
      * @return the Observable
      */
@@ -99,19 +99,44 @@ public class RxSPref {
         return Observable.defer(() -> Observable.just(getSettingsConnector().getIntSetting(key)));
     }
 
+    /**
+     * Retrieve a value from shared preferences
+     * @param key the key
+     * @return the Observable
+     */
     @SuppressWarnings("unused")
     public Observable<Boolean> retrieveAsBoolean(final String key, boolean defaultValue) {
         return Observable.defer(() -> Observable.just(getSettingsConnector().getBooleanSetting(key, defaultValue)));
     }
 
+    /**
+     * Retrieve a value from shared preferences
+     * @param key the key
+     * @return the Observable
+     */
     @SuppressWarnings("unused")
     public <T> Observable<List<T>> retrieveAsList(final String key) {
         return Observable.defer(() -> Observable.from(getSettingsConnector().getListSetting(key)));
     }
 
+    /**
+     * Retrieve a value from shared preferences
+     * @param key the key
+     * @return the Observable
+     */
     @SuppressWarnings("unused")
     public Observable<Float> retrieveAsFloat(final String key) {
         return Observable.defer(() -> Observable.just(getSettingsConnector().getFloatSetting(key)));
+    }
+
+    /**
+     * Retrieve a value from shared preferences
+     * @param key the key
+     * @return the Observable
+     */
+    @SuppressWarnings("unused")
+    public Observable<Long> retrieveAsLong(final String key) {
+        return Observable.defer(() -> Observable.just(getSettingsConnector().getLongSetting(key)));
     }
 
     /**
@@ -202,6 +227,21 @@ public class RxSPref {
         });
     }
 
+    @SuppressWarnings("unused")
+    public Observable<Boolean> write(final String key, final long value) {
+        return Observable.create(subscriber -> {
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().saveSetting(key, value);
+                    subscriber.onNext(true);
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
+                }
+                subscriber.onCompleted();
+            }
+        });
+    }
+
     /**
      * Writes a value to the shared preferences
      *
@@ -258,6 +298,27 @@ public class RxSPref {
             if (!subscriber.isUnsubscribed()) {
                 if (getPref() != null) {
                     getSettingsConnector().removeSetting(key);
+                    subscriber.onNext(true);
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
+                }
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    /**
+     * Remove all settings
+     *
+     * @param key the setting key
+     * @return the observable
+     */
+    @SuppressWarnings("unused")
+    public Observable<Boolean> removeAll(final String key) {
+        return Observable.create(subscriber -> {
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().removeAllSetting();
                     subscriber.onNext(true);
                 } else {
                     subscriber.onError(new SDKNotInitialized());
