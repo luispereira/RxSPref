@@ -1,6 +1,6 @@
 ext {
     //Android
-    applicationPackage = "com.lib.spreferences"
+    applicationPackage = "com.lib.rxspreflib"
     androidBuildToolsVersion = "23.0.2"
     androidMinSdkVersion = 14
     androidMinTestSdkVersion = 21
@@ -10,7 +10,7 @@ ext {
     androidAppCompatV7Version = '23.1.1'
     supportDesignVersion = '23.1.1'
     rxJavaVersion = '1.1.0'
-    sprefVersion = "0.4.0"
+    sprefVersion = "0.4.1"
 
     leakCannary = '1.4-beta2'
 
