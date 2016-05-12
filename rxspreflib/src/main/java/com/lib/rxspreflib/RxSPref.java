@@ -62,10 +62,34 @@ public class RxSPref {
     /**
      * The initializer method of the RxSPref lib
      * @param preferencesName shared preference name
-     * @return the instance of SPref
+     * @return the instance of RxSPref
      */
     public RxSPref name(String preferencesName) {
         sPref = sPref.name(preferencesName);
+        return this;
+    }
+
+    /**
+     * Encrypt configurations providing a key this key should have at least 128bits
+     * Remember that if you change this key the values that were written before are no longer accessible
+     * @param key the key in byte[] with at least 128bits
+     * @return the RxSPref instance
+     */
+    @SuppressWarnings("unused")
+    public RxSPref encrypt(byte[] key){
+        sPref = sPref.encrypt(key);
+        return this;
+    }
+
+    /**
+     * Encrypt configurations providing a key
+     * Remember that if you change this key the values that were written before are no longer accessible
+     * @param key the key hexadecimal to encrypt
+     * @return the RxSPref instance
+     */
+    @SuppressWarnings("unused")
+    public RxSPref encrypt(String key){
+        sPref = sPref.encrypt(key);
         return this;
     }
 
@@ -101,6 +125,17 @@ public class RxSPref {
     @SuppressWarnings("unused")
     public Observable<String> retrieve(final String key) {
         return Observable.defer(() -> Observable.just(getSettingsConnector().getSetting(key)));
+    }
+
+    /**
+     * Retrieve an encrypted value from shared preferences
+     *
+     * @param key the key
+     * @return the Observable
+     */
+    @SuppressWarnings("unused")
+    public Observable<String> retrieveEncrypted(final String key) {
+        return Observable.defer(() -> Observable.just(getSettingsConnector().getEncryptedSetting(key)));
     }
 
     /**
@@ -166,6 +201,28 @@ public class RxSPref {
             if (!subscriber.isUnsubscribed()) {
                 if (getPref() != null) {
                     getSettingsConnector().saveSetting(key, value);
+                    subscriber.onNext(true);
+                } else {
+                    subscriber.onError(new SDKNotInitialized());
+                }
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    /**
+     * Writes a value, which will be encrypted to the shared preferences
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the Observable
+     */
+    @SuppressWarnings("unused")
+    public Observable<Boolean> writeEncrypted(final String key, final String value) {
+        return Observable.create(subscriber -> {
+            if (!subscriber.isUnsubscribed()) {
+                if (getPref() != null) {
+                    getSettingsConnector().saveEncryptedSetting(key, value);
                     subscriber.onNext(true);
                 } else {
                     subscriber.onError(new SDKNotInitialized());
