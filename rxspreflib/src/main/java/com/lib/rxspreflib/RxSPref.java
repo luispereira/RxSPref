@@ -38,10 +38,24 @@ public class RxSPref {
      * Receives an xml file to be merged upon initialization
      * @param resource the resource xml file
      * @return instance to be initialized
+     * @deprecated use {@link #provideDefaultResourceFile(int, boolean)} instead
      */
+    @Deprecated
     @SuppressWarnings("unused")
     public RxSPref provideDefaultFile(int resource) {
         sPref = sPref.provideDefaultResourceFile(resource);
+        return this;
+    }
+
+    /**
+     * Provide a default resource file to merge all managed settings
+     * @param resource the resource file
+     * @param shouldOverride if every field found should override the preferences already written
+     * @return instance of RxSPref
+     */
+    @SuppressWarnings("unused")
+    public RxSPref provideDefaultResourceFile(int resource, boolean shouldOverride){
+        sPref = sPref.provideDefaultResourceFile(resource, shouldOverride);
         return this;
     }
 

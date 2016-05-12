@@ -10,7 +10,7 @@ ext {
     androidAppCompatV7Version = '23.1.1'
     supportDesignVersion = '23.1.1'
     rxJavaVersion = '1.1.0'
-    sprefVersion = "0.4.1"
+    sprefVersion = "0.5.0"
 
     leakCannary = '1.4-beta2'
 
