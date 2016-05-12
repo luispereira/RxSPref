@@ -7,7 +7,7 @@ Allows to retrieve and save Shared Preferences in a simpler way (using SPref lib
 Dependency:
 
 ```groovy 
-   compile 'com.github.luispereira:rxspreflib:0.1.1'
+   compile 'com.github.luispereira:rxspreflib:0.2.0'
 ```
 
 Repository:
@@ -21,9 +21,8 @@ Repository:
  
  In order to initialize the library, the following must be applied
  
- ```java 
+```java 
  public class SampleApplication extends Application {
-
     private RxSPref sPref;
     private static SampleApplication sInstance;
 
@@ -39,28 +38,53 @@ Repository:
         return sPref;
     }
 }
- ```
+```
  
  Then the user can manage the SharedPreferences the way we want by using e.g.
  
- ```java 
+```java 
      SampleApplication.getInstance().getPref().write(KEY, VALUE).subscribe();
- ```
+```
  
  Or, to retrieve:
  
-  ```java 
+```java 
      SampleApplication.getInstance().getPref().retrieveAsInt(KEY).subscribe();
      //retrieve() from string observable
      //retrieveAsBoolean() for boolean observable 
      //retrieveAsList() for a generic list observable
      //retrieveAsFloat() for a float obserable
      //retrieveAsLong() for a long observable
- ```
+```
  
  The user can always remove a shared preference:
-  ```java 
+ 
+```java 
      SampleApplication.getInstance().getPref().remove(KEY).subscribe();
      //removeAll() to remove all shared preferences 
- ```
+```
  
+### Encryption ###
+
+As in SPref, RxSPref also allows encryption on String preferences. 
+
+You can always use the API method to encrypt always all String keys:
+
+```java
+  encrypt(STRING_KEY);
+  //encrypt(BYTE_KEY);
+```
+
+Or you can Encrypt the String whenever you like by calling:
+```java
+   retrieveEncrypted(KEY); 
+```
+
+And to save:
+```java
+   writeEncrypted(KEY, VALUE);
+```
+
+### SPref ###
+RxSPref is base on SPref as you can check the repository here: 
+https://github.com/luispereira/SPref
