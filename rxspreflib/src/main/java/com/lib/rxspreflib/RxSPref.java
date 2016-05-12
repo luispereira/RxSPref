@@ -29,6 +29,7 @@ public class RxSPref {
     /**
      * This should be called in application onCreate
      * @param context the application context
+     * @return the RxSPref instance
      */
     public static RxSPref init(Context context) {
         return new RxSPref(context);
@@ -95,6 +96,7 @@ public class RxSPref {
 
     /**
      * Builds shared preference in order to access, save and remove  them
+     * @return the RxSPref instance
      */
     public RxSPref buildSettings() {
         mSettingsConnector = sPref.buildSettings();
@@ -151,6 +153,7 @@ public class RxSPref {
     /**
      * Retrieve a value from shared preferences
      * @param key the key
+     * @param defaultValue the default boolean value to save in case of error
      * @return the Observable
      */
     @SuppressWarnings("unused")
@@ -161,6 +164,7 @@ public class RxSPref {
     /**
      * Retrieve a value from shared preferences
      * @param key the key
+     * @param <T> generic value
      * @return the Observable
      */
     @SuppressWarnings("unused")
@@ -298,6 +302,12 @@ public class RxSPref {
         });
     }
 
+    /**
+     * Writes a value to the shared preferences
+     * @param key   the key
+     * @param value the value
+     * @return the Observable
+     */
     @SuppressWarnings("unused")
     public Observable<Boolean> write(final String key, final long value) {
         return Observable.create(subscriber -> {
@@ -315,9 +325,9 @@ public class RxSPref {
 
     /**
      * Writes a value to the shared preferences
-     *
      * @param key   the key
      * @param value the value
+     * @param <T> generic value
      * @return the Observable
      */
     @SuppressWarnings("unused")
